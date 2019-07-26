@@ -27,6 +27,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,8 +63,8 @@ public class Personal extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference UserRef;
 
-    String CurrentUserID;
-    String ImgUri, UserName, Phone, Country, Mail;
+    private String CurrentUserID;
+    private String ImgUri, UserName, Phone, Country, Mail;
 
    /* @BindView(R.id.adView)
     AdView mAdView;*/
@@ -93,25 +97,39 @@ public class Personal extends Fragment {
         args.putString("UserImg", ImgUri);
         fragment.setArguments(args);
 
-        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-        fragmentTransaction1.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
-        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-        fragmentTransaction1.commit();
+        FragmentTransaction fragmentTransaction1 = null;
+        if (getFragmentManager() != null) {
+            fragmentTransaction1 = getFragmentManager().beginTransaction();
+        }
+        if (fragmentTransaction1 != null) {
+            fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+            fragmentTransaction1.commit();
+        }
+
     }
     @OnClick(R.id.FavoriteItemsCard)
     public void GoToFavorite() {
         FavoriteItems fragment = new FavoriteItems();
-        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-        fragmentTransaction1.commit();
+        FragmentTransaction fragmentTransaction1 = null;
+        if (getFragmentManager() != null) {
+            fragmentTransaction1 = getFragmentManager().beginTransaction();
+        }
+        if (fragmentTransaction1 != null) {
+            fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+            fragmentTransaction1.commit();
+        }
     }
     @OnClick(R.id.MyChatsCard)
     public void GoToMyChats() {
-        /*MyChats fragment = new MyChats();
-        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-        fragmentTransaction1.commit();*/
-        Toast.makeText(context.getApplicationContext(),"it will done soon isa ...",Toast.LENGTH_SHORT).show();
+        MyChats fragment = new MyChats();
+        FragmentTransaction fragmentTransaction1 = null;
+        if (getFragmentManager() != null) {
+            fragmentTransaction1 = getFragmentManager().beginTransaction();
+        }
+        if (fragmentTransaction1 != null) {
+            fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+            fragmentTransaction1.commit();
+        }
     }
     @OnClick(R.id.MyRatesCard)
     public void GoToMyRates(){
@@ -158,7 +176,7 @@ public class Personal extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.personal_frag, container, false);
         context = getActivity();
@@ -166,7 +184,7 @@ public class Personal extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         UserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers");
-        CurrentUserID = mAuth.getCurrentUser().getUid();
+        CurrentUserID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         SharedPreferences pref = context.getApplicationContext().getSharedPreferences("CurrentUser", MODE_PRIVATE);
         welcome_name.setText(pref.getString("UserName",""));
@@ -218,7 +236,7 @@ public class Personal extends Fragment {
 
         super.onResume();
 
-        getView().setFocusableInTouchMode(true);
+        Objects.requireNonNull(getView()).setFocusableInTouchMode(true);
         getView().requestFocus();
         getView().setOnKeyListener((v, keyCode, event) -> {
 

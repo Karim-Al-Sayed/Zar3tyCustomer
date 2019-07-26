@@ -31,14 +31,15 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyViewHolder> {
     private ArrayList<Items> itemsList;
-    Context context;
+    private Context context;
     Items item;
     private FirebaseAuth SalesAuth;
     Items items;
-    String id;
+    private String id;
     private StorageReference Sales_Storage_Ref;
     private DatabaseReference Fav_Ref;
 
@@ -55,7 +56,7 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
         View itemView = LayoutInflater.from(context).inflate(R.layout.item_row, parent, false);
         Fav_Ref = FirebaseDatabase.getInstance().getReference("Favorites");
         SalesAuth = FirebaseAuth.getInstance();
-        id = SalesAuth.getCurrentUser().getUid();
+        id = Objects.requireNonNull(SalesAuth.getCurrentUser()).getUid();
         Sales_Storage_Ref = FirebaseStorage.getInstance().getReference("Sales");
         return new MyViewHolder(itemView);
     }
@@ -77,6 +78,7 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
             args.putString("ItemPrice",holder.Item_Price.getText().toString());
             args.putString("ItemImg", itemsList.get(position).getImg_uri());
             args.putString("ItemCategory",itemsList.get(position).getCategory());
+            args.putString("SellerID",itemsList.get(position).getId());
             args.putString("UniqueID","from_ItemsAdapter");
             fragment.setArguments(args);
 
@@ -96,12 +98,8 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
             favMap.put("Item_Price", holder.Item_Price.getText().toString() + " EGP");
             favMap.put("User_ID", id);
 
-            Fav_Ref.child(id).push().setValue(favMap).addOnCompleteListener(task -> {
-                Toast.makeText(context.getApplicationContext(), itemsList.get(position).getTitle() + " has been added to Favorites Successfully", Toast.LENGTH_SHORT).show();
-
-            }).addOnFailureListener(e -> {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
+            Fav_Ref.child(id).push().setValue(favMap).addOnCompleteListener(task -> Toast.makeText(context.getApplicationContext(), itemsList.get(position).getTitle() + " has been added to Favorites Successfully", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show());
 
 
         });
@@ -112,12 +110,12 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
         return itemsList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         TextView Item_Title, Item_Price;
         ImageView Item_Img, fav_Img;
         CardView Card_Item;
 
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
             Item_Title = itemView.findViewById(R.id.cust_item_title_row);
             Item_Price = itemView.findViewById(R.id.cust_item_price_row);

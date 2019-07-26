@@ -28,17 +28,17 @@ public class Splash extends AppCompatActivity {
     FirebaseUser firebaseUser;
     DatabaseReference CustomerReference;
 
-    @BindView(R.id.splash_app_txt)
+  /*  @BindView(R.id.splash_app_txt)
     TextView app_txt;
-
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash_act);
-        ButterKnife.bind(this);
+        /*setContentView(R.layout.splash_act);
+        ButterKnife.bind(this);*/
 
         Animation myanim = AnimationUtils.loadAnimation(Splash.this, R.anim.stb2);
-        app_txt.setAnimation(myanim);
+      //  app_txt.setAnimation(myanim);
 
         firebaseAuth = FirebaseAuth.getInstance();
         CustomerReference = FirebaseDatabase.getInstance().getReference("Users").child("Customers");

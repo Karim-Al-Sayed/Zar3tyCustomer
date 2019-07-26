@@ -2,6 +2,7 @@ package com.elasdka2.zar3tycustomer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,8 +25,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +56,12 @@ public class ItemInfoFrag extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseReference MyRef;
     private Uri uri;
-    String MainCategory, UploadDate, DateToShow, intent_from, part1, part2;
+    private String MainCategory;
+    private String DateToShow;
+    private String intent_from;
+    private String part1;
+    private String part2;
+    private String seller_id;
     Context context;
     //-----------------------------------------------
     @BindView(R.id.sales_item_info_img)
@@ -71,6 +82,23 @@ public class ItemInfoFrag extends Fragment {
     Button contact_seller;
     private boolean doubleBackToExitPressedOnce = false;
 
+    //-----------------------------------------------
+    @OnClick(R.id.sales_item_info_contact_seller)
+    public void Contact(){
+        /*Bundle args = new Bundle();
+        args.putString("SellerID",seller_id);
+        args.putString("UniqueID","from_Item_Info");
+        ChatFrag fragment = new ChatFrag();
+        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
+        fragmentTransaction1.replace(R.id.constraint_nav, fragment);
+        fragment.setArguments(args);
+        fragmentTransaction1.commit();*/
+        Intent intent = new Intent(context,ChatAct.class);
+        intent.putExtra("SellerID",seller_id);
+        intent.putExtra("UniqueID","from_Item_Info");
+        context.startActivity(intent);
+        ((Activity)context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
     //-----------------------------------------------
     public ItemInfoFrag() {
         // Required empty public constructor
@@ -104,7 +132,7 @@ public class ItemInfoFrag extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_item_info, container, false);
         context = getActivity();
@@ -112,94 +140,113 @@ public class ItemInfoFrag extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         MyRef = FirebaseDatabase.getInstance().getReference("Sales");
-        intent_from = getArguments().getString("UniqueID");
         if (getArguments() != null){
             if (!TextUtils.isEmpty(intent_from)){
+                intent_from = getArguments().getString("UniqueID");
 
-                if (intent_from.equals("from_AgricultureItemsAdapter")){
-                    item_info_title.setText(getArguments().getString("ItemTitle"));
-                    item_info_description.setText(getArguments().getString("ItemDescription"));
-                    item_info_price.setText(getArguments().getString("ItemPrice"));
+                String uploadDate;
+                if (intent_from != null) {
+                    switch (intent_from) {
+                        case "from_AgricultureItemsAdapter": {
+                            item_info_title.setText(getArguments().getString("ItemTitle"));
+                            item_info_description.setText(getArguments().getString("ItemDescription"));
+                            item_info_price.setText(getArguments().getString("ItemPrice"));
 
-                    String string = item_info_price.getText().toString();
-                    String[] parts = string.split(" ");
-                    part1 = parts[0]; // Money
-                    part2 = parts[1]; // LE
+                            String string = item_info_price.getText().toString();
+                            String[] parts = string.split(" ");
+                            part1 = parts[0]; // Money
 
-                    item_info_category.setText(getArguments().getString("ItemCategory"));
-                    item_info_date.setText(getArguments().getString("ItemDate"));
-                    MainCategory = getArguments().getString("ItemMainCategory");
-                    UploadDate = getArguments().getString("UploadDate");
-                    DateToShow = getArguments().getString("ItemDate");
-                    Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+                            part2 = parts[1]; // LE
 
-                }else if (intent_from.equals("from_ItemsAdapter")){
-                    item_info_title.setText(getArguments().getString("ItemTitle"));
-                    item_info_description.setText(getArguments().getString("ItemDescription"));
-                    item_info_price.setText(getArguments().getString("ItemPrice"));
 
-                    String string = item_info_price.getText().toString();
-                    String[] parts = string.split(" ");
-                    part1 = parts[0]; // Money
-                    part2 = parts[1]; // LE
+                            item_info_category.setText(getArguments().getString("ItemCategory"));
+                            item_info_date.setText(getArguments().getString("ItemDate"));
+                            MainCategory = getArguments().getString("ItemMainCategory");
+                            DateToShow = getArguments().getString("ItemDate");
+                            Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
 
-                    item_info_category.setText(getArguments().getString("ItemCategory"));
-                    item_info_date.setText(getArguments().getString("ItemDate"));
-                    MainCategory = getArguments().getString("ItemMainCategory");
-                    UploadDate = getArguments().getString("UploadDate");
-                    DateToShow = getArguments().getString("ItemDate");
-                    Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+                            break;
+                        }
+                        case "from_ItemsAdapter": {
+                            item_info_title.setText(getArguments().getString("ItemTitle"));
+                            item_info_description.setText(getArguments().getString("ItemDescription"));
+                            item_info_price.setText(getArguments().getString("ItemPrice"));
+                            seller_id = getArguments().getString("SellerID");
+                            String string = item_info_price.getText().toString();
+                            String[] parts = string.split(" ");
+                            part1 = parts[0]; // Money
 
-                }else if (intent_from.equals("from_IrrigationItemsAdapter")){
-                    item_info_title.setText(getArguments().getString("ItemTitle"));
-                    item_info_description.setText(getArguments().getString("ItemDescription"));
-                    item_info_price.setText(getArguments().getString("ItemPrice"));
+                            part2 = parts[1]; // LE
 
-                    String string = item_info_price.getText().toString();
-                    String[] parts = string.split(" ");
-                    part1 = parts[0]; // Money
-                    part2 = parts[1]; // LE
 
-                    item_info_category.setText(getArguments().getString("ItemCategory"));
-                    item_info_date.setText(getArguments().getString("ItemDate"));
-                    MainCategory = getArguments().getString("ItemMainCategory");
-                    UploadDate = getArguments().getString("UploadDate");
-                    DateToShow = getArguments().getString("ItemDate");
-                    Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+                            item_info_category.setText(getArguments().getString("ItemCategory"));
+                            item_info_date.setText(getArguments().getString("ItemDate"));
+                            MainCategory = getArguments().getString("ItemMainCategory");
+                            DateToShow = getArguments().getString("ItemDate");
+                            Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
 
-                }else if (intent_from.equals("from_IndustrialAgricultureItemsAdapter")){
-                    item_info_title.setText(getArguments().getString("ItemTitle"));
-                    item_info_description.setText(getArguments().getString("ItemDescription"));
-                    item_info_price.setText(getArguments().getString("ItemPrice"));
+                            break;
+                        }
+                        case "from_IrrigationItemsAdapter": {
+                            item_info_title.setText(getArguments().getString("ItemTitle"));
+                            item_info_description.setText(getArguments().getString("ItemDescription"));
+                            item_info_price.setText(getArguments().getString("ItemPrice"));
 
-                    String string = item_info_price.getText().toString();
-                    String[] parts = string.split(" ");
-                    part1 = parts[0]; // Money
-                    part2 = parts[1]; // LE
+                            String string = item_info_price.getText().toString();
+                            String[] parts = string.split(" ");
+                            part1 = parts[0]; // Money
 
-                    item_info_category.setText(getArguments().getString("ItemCategory"));
-                    item_info_date.setText(getArguments().getString("ItemDate"));
-                    MainCategory = getArguments().getString("ItemMainCategory");
-                    UploadDate = getArguments().getString("UploadDate");
-                    DateToShow = getArguments().getString("ItemDate");
-                    Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+                            part2 = parts[1]; // LE
 
-                }else if (intent_from.equals("from_UpdateItemData")){
 
-                    item_info_title.setText(getArguments().getString("ItemTitle"));
-                    item_info_description.setText(getArguments().getString("ItemDescription"));
-                    item_info_price.setText(getArguments().getString("ItemPrice"));
-                    String string = item_info_price.getText().toString();
-                    String[] parts = string.split(" ");
-                    part1 = parts[0]; // Money
-                    part2 = parts[1]; // LE
-                    item_info_category.setText(getArguments().getString("ItemCategory"));
-                    item_info_date.setText(getArguments().getString("ItemDate"));
-                    MainCategory = getArguments().getString("ItemMainCategory");
-                    UploadDate = getArguments().getString("UploadDate");
-                    DateToShow = getArguments().getString("ItemDate");
-                    Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+                            item_info_category.setText(getArguments().getString("ItemCategory"));
+                            item_info_date.setText(getArguments().getString("ItemDate"));
+                            MainCategory = getArguments().getString("ItemMainCategory");
+                            DateToShow = getArguments().getString("ItemDate");
+                            Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
 
+                            break;
+                        }
+                        case "from_IndustrialAgricultureItemsAdapter": {
+                            item_info_title.setText(getArguments().getString("ItemTitle"));
+                            item_info_description.setText(getArguments().getString("ItemDescription"));
+                            item_info_price.setText(getArguments().getString("ItemPrice"));
+
+                            String string = item_info_price.getText().toString();
+                            String[] parts = string.split(" ");
+                            part1 = parts[0]; // Money
+
+                            part2 = parts[1]; // LE
+
+
+                            item_info_category.setText(getArguments().getString("ItemCategory"));
+                            item_info_date.setText(getArguments().getString("ItemDate"));
+                            MainCategory = getArguments().getString("ItemMainCategory");
+                            DateToShow = getArguments().getString("ItemDate");
+                            Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+
+                            break;
+                        }
+                        case "from_UpdateItemData": {
+
+                            item_info_title.setText(getArguments().getString("ItemTitle"));
+                            item_info_description.setText(getArguments().getString("ItemDescription"));
+                            item_info_price.setText(getArguments().getString("ItemPrice"));
+                            String string = item_info_price.getText().toString();
+                            String[] parts = string.split(" ");
+                            part1 = parts[0]; // Money
+
+                            part2 = parts[1]; // LE
+
+                            item_info_category.setText(getArguments().getString("ItemCategory"));
+                            item_info_date.setText(getArguments().getString("ItemDate"));
+                            MainCategory = getArguments().getString("ItemMainCategory");
+                            DateToShow = getArguments().getString("ItemDate");
+                            Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
+
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -210,33 +257,62 @@ public class ItemInfoFrag extends Fragment {
 
         super.onResume();
 
-        getView().setFocusableInTouchMode(true);
+        Objects.requireNonNull(getView()).setFocusableInTouchMode(true);
         getView().requestFocus();
         getView().setOnKeyListener((v, keyCode, event) -> {
 
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
 
                 if (getArguments() != null){
-                    if (intent_from.equals("from_AgricultureItemsAdapter")){
-                        AgricultureItems fragment = new AgricultureItems();
-                        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-                        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-                        fragmentTransaction1.commit();
-                    }else if (intent_from.equals("from_IrrigationItemsAdapter")){
-                        IrrigationItems fragment = new IrrigationItems();
-                        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-                        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-                        fragmentTransaction1.commit();
-                    }else if (intent_from.equals("from_IndustrialAgricultureItemsAdapter")){
-                        IndustrialAgricultureItems fragment = new IndustrialAgricultureItems();
-                        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-                        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-                        fragmentTransaction1.commit();
-                    }else if (intent_from.equals("from_ItemsAdapter")) {
-                        Home fragment = new Home();
-                        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-                        fragmentTransaction1.replace(R.id.Frame_Content, fragment);
-                        fragmentTransaction1.commit();
+                    switch (intent_from) {
+                        case "from_AgricultureItemsAdapter": {
+                            AgricultureItems fragment = new AgricultureItems();
+                            FragmentTransaction fragmentTransaction1 = null;
+                            if (getFragmentManager() != null) {
+                                fragmentTransaction1 = getFragmentManager().beginTransaction();
+                            }
+                            if (fragmentTransaction1 != null) {
+                                fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+                                fragmentTransaction1.commit();
+                            }
+                            break;
+                        }
+                        case "from_IrrigationItemsAdapter": {
+                            IrrigationItems fragment = new IrrigationItems();
+                            FragmentTransaction fragmentTransaction1 = null;
+                            if (getFragmentManager() != null) {
+                                fragmentTransaction1 = getFragmentManager().beginTransaction();
+                            }
+                            if (fragmentTransaction1 != null) {
+                                fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+                                fragmentTransaction1.commit();
+                            }
+                            break;
+                        }
+                        case "from_IndustrialAgricultureItemsAdapter": {
+                            IndustrialAgricultureItems fragment = new IndustrialAgricultureItems();
+                            FragmentTransaction fragmentTransaction1 = null;
+                            if (getFragmentManager() != null) {
+                                fragmentTransaction1 = getFragmentManager().beginTransaction();
+                            }
+                            if (fragmentTransaction1 != null) {
+                                fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+                                fragmentTransaction1.commit();
+                            }
+                            break;
+                        }
+                        case "from_ItemsAdapter": {
+                            Home fragment = new Home();
+                            FragmentTransaction fragmentTransaction1 = null;
+                            if (getFragmentManager() != null) {
+                                fragmentTransaction1 = getFragmentManager().beginTransaction();
+                            }
+                            if (fragmentTransaction1 != null) {
+                                fragmentTransaction1.replace(R.id.Frame_Content, fragment);
+                                fragmentTransaction1.commit();
+                            }
+                            break;
+                        }
                     }
 
                     }else {
