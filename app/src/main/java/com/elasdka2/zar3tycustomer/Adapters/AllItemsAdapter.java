@@ -48,8 +48,6 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
         this.context = context;
     }
 
-
-
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

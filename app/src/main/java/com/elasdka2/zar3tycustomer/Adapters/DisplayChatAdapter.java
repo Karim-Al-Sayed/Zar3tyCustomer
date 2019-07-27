@@ -43,7 +43,7 @@ public class DisplayChatAdapter extends RecyclerView.Adapter<DisplayChatAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.chat_item_row,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.chat_user_row,parent,false);
 
         return new DisplayChatAdapter.ViewHolder(view);
     }

@@ -202,7 +202,7 @@ public class Login extends AppCompatActivity {
                         String token_id = FirebaseInstanceId.getInstance().getToken();
                         String user_id = mAuth.getCurrentUser().getUid();
 
-                        UsersRef.child("Sellers").child(user_id).child("token_id").setValue(token_id).addOnSuccessListener(aVoid -> {
+                        UsersRef.child("Customers").child(user_id).child("token_id").setValue(token_id).addOnSuccessListener(aVoid -> {
 
                             Intent intent = new Intent(Login.this, Navigation.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

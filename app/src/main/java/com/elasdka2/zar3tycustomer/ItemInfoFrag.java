@@ -141,24 +141,17 @@ public class ItemInfoFrag extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         MyRef = FirebaseDatabase.getInstance().getReference("Sales");
         if (getArguments() != null){
-            if (!TextUtils.isEmpty(intent_from)){
-                intent_from = getArguments().getString("UniqueID");
+            intent_from = getArguments().getString("UniqueID");
 
-                String uploadDate;
+            if (!TextUtils.isEmpty(intent_from)){
+
+
                 if (intent_from != null) {
                     switch (intent_from) {
                         case "from_AgricultureItemsAdapter": {
                             item_info_title.setText(getArguments().getString("ItemTitle"));
                             item_info_description.setText(getArguments().getString("ItemDescription"));
                             item_info_price.setText(getArguments().getString("ItemPrice"));
-
-                            String string = item_info_price.getText().toString();
-                            String[] parts = string.split(" ");
-                            part1 = parts[0]; // Money
-
-                            part2 = parts[1]; // LE
-
-
                             item_info_category.setText(getArguments().getString("ItemCategory"));
                             item_info_date.setText(getArguments().getString("ItemDate"));
                             MainCategory = getArguments().getString("ItemMainCategory");
@@ -172,13 +165,6 @@ public class ItemInfoFrag extends Fragment {
                             item_info_description.setText(getArguments().getString("ItemDescription"));
                             item_info_price.setText(getArguments().getString("ItemPrice"));
                             seller_id = getArguments().getString("SellerID");
-                            String string = item_info_price.getText().toString();
-                            String[] parts = string.split(" ");
-                            part1 = parts[0]; // Money
-
-                            part2 = parts[1]; // LE
-
-
                             item_info_category.setText(getArguments().getString("ItemCategory"));
                             item_info_date.setText(getArguments().getString("ItemDate"));
                             MainCategory = getArguments().getString("ItemMainCategory");
