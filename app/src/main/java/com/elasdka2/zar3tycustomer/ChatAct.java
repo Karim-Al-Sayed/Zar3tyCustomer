@@ -17,8 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.elasdka2.zar3tycustomer.Adapters.ChatAdapter;
 import com.elasdka2.zar3tycustomer.Model.Chat;
 import com.elasdka2.zar3tycustomer.Model.Tokens;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,12 +36,14 @@ import butterknife.OnClick;
 
 public class ChatAct extends AppCompatActivity {
     //-----------------------------------------
-    private DatabaseReference MyRef;
+    private DatabaseReference MyRef, reference,NotificationRef;
     private FirebaseUser MyUser;
     Context context;
     String MyUserID, UserID, intent;
     ChatAdapter messageAdapter;
     ArrayList<Chat> mchat;
+    boolean notify = false;
+
     //-----------------------------------------
     @BindView(R.id.message_message_edt)
     EditText Send_EditText;
@@ -75,10 +75,11 @@ public class ChatAct extends AppCompatActivity {
         setContentView(R.layout.chat_act);
         ButterKnife.bind(this);
         context = ChatAct.this;
-
+        NotificationRef = FirebaseDatabase.getInstance().getReference().child("Notifications");
         MyUser = FirebaseAuth.getInstance().getCurrentUser();
         if (MyUser != null) {
             MyUserID = MyUser.getUid();
+
         }
 
         if (getIntent() != null) {
@@ -107,34 +108,30 @@ public class ChatAct extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> ChatMap = new HashMap<>();
-        ChatMap.put("sender", sender);
-        ChatMap.put("receiver", receiver);
+        ChatMap.put("from", sender);
+        ChatMap.put("to", receiver);
         ChatMap.put("message", message);
         reference.child("Chats").push().setValue(ChatMap).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Send_EditText.setText("");
-            }
+               }
         });
-
     }
 
-    private void ReadMessage(final String CustomerID, final String SellerID) {
+    private void ReadMessage(final String CustomerID, final String SellerID){
         mchat = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mchat.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
-
-                    if (chat != null && (chat.getReceiver().equals(CustomerID) && chat.getSender().equals(SellerID) ||
-                            chat.getReceiver().equals(SellerID) && chat.getSender().equals(CustomerID))) {
+                    if (chat != null && (chat.getTo().equals(CustomerID) && chat.getFrom().equals(SellerID) ||
+                            chat.getTo().equals(SellerID) && chat.getFrom().equals(CustomerID))) {
                         mchat.add(chat);
                     }
-
-
-                    messageAdapter = new ChatAdapter(mchat, context);
+                    messageAdapter = new ChatAdapter(mchat,context);
                     message_recycler.setAdapter(messageAdapter);
                 }
             }
@@ -146,13 +143,13 @@ public class ChatAct extends AppCompatActivity {
         });
         // add user to chat fragment
         final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(MyUserID)
+                .child(MyUser.getUid())
                 .child(UserID);
 
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
+                if (!dataSnapshot.exists()){
                     chatRef.child("User_ID").setValue(UserID);
                 }
             }
@@ -163,11 +160,10 @@ public class ChatAct extends AppCompatActivity {
             }
         });
 
-
         final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(UserID)
-                .child(MyUserID);
-        chatRefReceiver.child("User_ID").setValue(MyUserID);
+                .child(MyUser.getUid());
+        chatRefReceiver.child("User_ID").setValue(MyUser.getUid());
     }
 
     private void UpdateToken(String token) {

@@ -62,11 +62,13 @@ public class Splash extends AppCompatActivity {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                 String user_name = ds.child("UserName").getValue(String.class);
+                                String user_ID = ds.child("User_ID").getValue(String.class);
                                 String user_mail = ds.child("Mail").getValue(String.class);
 
                                 SharedPreferences.Editor editor = getSharedPreferences("CurrentUser", MODE_PRIVATE).edit();
-                                editor.putString("UserName", user_name);
-                                editor.putString("UserMail", user_mail);
+                                editor.putString("CustomerName", user_name);
+                                editor.putString("CustomerID", user_ID);
+                                editor.putString("CustomerMail", user_mail);
                                 editor.apply();
 
                                 Intent intent = new Intent(Splash.this, Navigation.class);

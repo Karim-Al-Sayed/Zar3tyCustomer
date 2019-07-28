@@ -99,8 +99,8 @@ public class DisplayChatAdapter extends RecyclerView.Adapter<DisplayChatAdapter.
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
                     if (firebaseUser != null && chat != null) {
-                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
-                                chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                        if (chat.getTo().equals(firebaseUser.getUid()) && chat.getFrom().equals(userid) ||
+                                chat.getTo().equals(userid) && chat.getFrom().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
                         }
                     }
