@@ -60,6 +60,7 @@
     <string name="sales_update_item_description_hint">Update Item Description</string>
     <string name="sales_update_item_info_update_btn">Update</string>
     <string name="ContactSeller">Contact Seller</string>
+    <string name="Request_Item">Request Item</string>
     <string name="DeleteFromFavorite">Delete From Favorite</string>
     <string name="SalesItemInfoCategoryTag">Item Category :</string>
 

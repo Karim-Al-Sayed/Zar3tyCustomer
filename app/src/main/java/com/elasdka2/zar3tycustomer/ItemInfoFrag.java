@@ -21,12 +21,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.elasdka2.zar3tycustomer.Model.RequestQuantityBottomSheet;
+import com.google.android.gms.identity.intents.AddressConstants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -54,14 +59,15 @@ public class ItemInfoFrag extends Fragment {
     private OnFragmentInteractionListener mListener;
     //-----------------------------------------------
     private FirebaseAuth mAuth;
-    private DatabaseReference MyRef;
+    private DatabaseReference MyRef, Ref_pending;
     private Uri uri;
+
     private String MainCategory;
-    private String DateToShow;
+    private String DateToShow, RequestDate;
     private String intent_from;
     private String part1;
     private String part2;
-    private String seller_id;
+    private String seller_id, CurrentUser, img;
     Context context;
     //-----------------------------------------------
     @BindView(R.id.sales_item_info_img)
@@ -80,25 +86,44 @@ public class ItemInfoFrag extends Fragment {
     TextView item_info_date;
     @BindView(R.id.sales_item_info_contact_seller)
     Button contact_seller;
+    @BindView(R.id.sales_item_info_Request_RequestItem)
+    Button Request_Item;
+
+
     private boolean doubleBackToExitPressedOnce = false;
 
     //-----------------------------------------------
-    @OnClick(R.id.sales_item_info_contact_seller)
-    public void Contact(){
-        /*Bundle args = new Bundle();
+    @OnClick(R.id.sales_item_info_Request_RequestItem)
+    public void Request() {
+        String string = item_info_price.getText().toString();
+        String[] parts = string.split(" ");
+        part1 = parts[0]; // Money
+        part2 = parts[1]; // LE
+        Calendar calendar = Calendar.getInstance();
+        String currentDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.getTime());
+        Bundle args = new Bundle();
+        args.putInt("Price",Integer.parseInt(part1));
+        args.putString("Item_Title", item_info_title.getText().toString());
+        args.putString("Item_IMG",getArguments().getString("ItemImg"));
+        args.putString("Request_Date",currentDate);
+        args.putString("CustomerID",CurrentUser);
         args.putString("SellerID",seller_id);
-        args.putString("UniqueID","from_Item_Info");
-        ChatFrag fragment = new ChatFrag();
-        FragmentTransaction fragmentTransaction1 = getFragmentManager().beginTransaction();
-        fragmentTransaction1.replace(R.id.constraint_nav, fragment);
-        fragment.setArguments(args);
-        fragmentTransaction1.commit();*/
-        Intent intent = new Intent(context,ChatAct.class);
-        intent.putExtra("SellerID",seller_id);
-        intent.putExtra("UniqueID","from_Item_Info");
-        context.startActivity(intent);
-        ((Activity)context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+        RequestQuantityBottomSheet bottomSheet = new RequestQuantityBottomSheet();
+        bottomSheet.setArguments(args);
+        bottomSheet.setCancelable(false);
+        bottomSheet.show(getChildFragmentManager(),"");
     }
+
+    @OnClick(R.id.sales_item_info_contact_seller)
+    public void Contact() {
+        Intent intent = new Intent(context, ChatAct.class);
+        intent.putExtra("SellerID", seller_id);
+        intent.putExtra("UniqueID", "from_Item_Info");
+        context.startActivity(intent);
+        ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
     //-----------------------------------------------
     public ItemInfoFrag() {
         // Required empty public constructor
@@ -122,6 +147,7 @@ public class ItemInfoFrag extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,11 +165,12 @@ public class ItemInfoFrag extends Fragment {
         ButterKnife.bind(this, v);
 
         mAuth = FirebaseAuth.getInstance();
+        CurrentUser = mAuth.getCurrentUser().getUid();
         MyRef = FirebaseDatabase.getInstance().getReference("Sales");
-        if (getArguments() != null){
+        if (getArguments() != null) {
             intent_from = getArguments().getString("UniqueID");
 
-            if (!TextUtils.isEmpty(intent_from)){
+            if (!TextUtils.isEmpty(intent_from)) {
 
 
                 if (intent_from != null) {
@@ -156,6 +183,7 @@ public class ItemInfoFrag extends Fragment {
                             item_info_date.setText(getArguments().getString("ItemDate"));
                             MainCategory = getArguments().getString("ItemMainCategory");
                             DateToShow = getArguments().getString("ItemDate");
+                            img = getArguments().getString("ItemImg");
                             Glide.with(context.getApplicationContext()).load(getArguments().getString("ItemImg")).into(item_info_img);
 
                             break;
@@ -236,8 +264,12 @@ public class ItemInfoFrag extends Fragment {
                 }
             }
         }
+
+
+
         return v;
     }
+
     @Override
     public void onResume() {
 
@@ -249,7 +281,7 @@ public class ItemInfoFrag extends Fragment {
 
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
 
-                if (getArguments() != null){
+                if (getArguments() != null) {
                     switch (intent_from) {
                         case "from_AgricultureItemsAdapter": {
                             AgricultureItems fragment = new AgricultureItems();
@@ -301,11 +333,11 @@ public class ItemInfoFrag extends Fragment {
                         }
                     }
 
-                    }else {
+                } else {
                     if (doubleBackToExitPressedOnce) {
-                        ((Activity)context).moveTaskToBack(true);
+                        ((Activity) context).moveTaskToBack(true);
 
-                    }else {
+                    } else {
                         this.doubleBackToExitPressedOnce = true;
                         Toast.makeText(context, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
@@ -320,6 +352,7 @@ public class ItemInfoFrag extends Fragment {
             return false;
         });
     }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

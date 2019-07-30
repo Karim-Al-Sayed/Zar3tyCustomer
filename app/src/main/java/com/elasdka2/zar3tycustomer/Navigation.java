@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.elasdka2.zar3tycustomer.Model.RequestQuantityBottomSheet;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class Navigation extends AppCompatActivity implements ComplaintBottomSheetDialog.BottomSheetListener,
-                            LanguageBottomSheetDialog.BottomSheetListener{
+                            LanguageBottomSheetDialog.BottomSheetListener,RequestQuantityBottomSheet.BottomSheetListener{
     @BindView(R.id.bottom_nav)
     BottomNavigationView navigation;
 
@@ -84,6 +85,9 @@ public class Navigation extends AppCompatActivity implements ComplaintBottomShee
 
         LanguageBottomSheetDialog languageBottomSheetDialog = new LanguageBottomSheetDialog();
         languageBottomSheetDialog.setCancelable(false);
+
+        RequestQuantityBottomSheet requestQuantityBottomSheet = new RequestQuantityBottomSheet();
+        requestQuantityBottomSheet.setCancelable(false);
 
         mAuth = FirebaseAuth.getInstance();
         UserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers");
