@@ -30,7 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -95,6 +97,7 @@ public class ItemInfoFrag extends Fragment {
     //-----------------------------------------------
     @OnClick(R.id.sales_item_info_Request_RequestItem)
     public void Request() {
+
         String string = item_info_price.getText().toString();
         String[] parts = string.split(" ");
         part1 = parts[0]; // Money

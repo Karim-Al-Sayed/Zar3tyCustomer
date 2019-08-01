@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.elasdka2.zar3tycustomer.ItemInfoFrag;
 import com.elasdka2.zar3tycustomer.R;
@@ -38,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
 
@@ -63,21 +65,30 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
             Toast.makeText(getActivity(), "Type quantity you need here Please !", Toast.LENGTH_LONG).show();
         } else {
             if (getArguments() != null) {
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("Item_Title", getArguments().getString("Item_Title"));
-                map.put("Item_IMG", getArguments().getString("Item_IMG"));
-                map.put("Request_Date", getArguments().getString("Request_Date"));
-                map.put("CustomerID", getArguments().getString("CustomerID"));
-                map.put("SellerID", getArguments().getString("SellerID"));
-                map.put("Price", CalcSalary(itemPrice) + " EGP");
-                map.put("UserName", UserName);
-                map.put("UserImg", ImgUser);
-                map.put("Quantity", str_quantity);
-                Ref_pending.push().setValue(map);
-                dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getActivity()).getApplicationContext()).create();
+                alertDialog.setMessage("Are you sure ? Request " + getArguments().getString("Item_Title"));
+
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "REQUEST",
+                        (dialog, which) -> {
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("ItemTitle", getArguments().getString("Item_Title"));
+                            map.put("ItemIMG", getArguments().getString("Item_IMG"));
+                            map.put("RequestDate", getArguments().getString("Request_Date"));
+                            map.put("State","Pending");
+                            map.put("CustomerID", getArguments().getString("CustomerID"));
+                            map.put("SellerID", getArguments().getString("SellerID"));
+                            map.put("ItemPrice", CalcSalary(itemPrice) + " EGP");
+                            map.put("CustomerName", UserName);
+                            map.put("CustomerImg", ImgUser);
+                            map.put("ItemQuantity", str_quantity);
+                            Ref_pending.push().setValue(map);
+                            dismiss();
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> dialog.dismiss());
+
+                alertDialog.show();
 
             }
-
 
         }
     }
