@@ -73,7 +73,7 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
                 map.put("State", "Pending");
                 map.put("CustomerID", getArguments().getString("CustomerID"));
                 map.put("SellerID", getArguments().getString("SellerID"));
-                map.put("ItemPrice", CalcSalary(itemPrice) + " EGP");
+                map.put("ItemPrice", String.valueOf(CalcSalary(itemPrice)));
                 map.put("CustomerName", UserName);
                 map.put("CustomerImg", ImgUser);
                 map.put("ItemQuantity", str_quantity);
@@ -98,6 +98,19 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.complaint_bottom_sheet, container, false);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         done = v.findViewById(R.id.Quantity_Accept);
         cancel = v.findViewById(R.id.Quantity_Reject);

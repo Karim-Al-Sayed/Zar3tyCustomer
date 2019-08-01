@@ -12,6 +12,6 @@
         android:icon="@drawable/ic_account_circle_black_24dp"/>
     <item android:id="@+id/Setting" android:title="Support"
         tools:ignore="HardcodedText"
-        android:icon="@drawable/ic_setting_vector"/>
+        android:icon="@drawable/ic_help_black"/>
 
 </menu>

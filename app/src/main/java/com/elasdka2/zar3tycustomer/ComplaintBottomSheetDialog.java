@@ -36,20 +36,6 @@ public class ComplaintBottomSheetDialog extends BottomSheetDialogFragment {
     String CurrentUserID;
     Button send_btn,cancel_btn;
     EditText complaint;
-    /*@BindView(R.id.send_complaint_btn)
-    Button send;
-    @BindView(R.id.cancel_complaint_btn)
-    Button cancel;
-    @BindView(R.id.complaint_edit_text)
-    EditText complaint;
-    @OnClick(R.id.cancel_complaint_btn)
-    public void Cancel(){
-        dismiss();
-    }*/
-   /* @OnClick(R.id.send_complaint_btn)
-    public void SendComplaint(){
-        CheckDataAndSend();
-    }*/
 
     private void CheckDataAndSend() {
         String str_complaint = complaint.getText().toString();
