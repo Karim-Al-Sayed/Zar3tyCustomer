@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     tools:layout_editor_absoluteY="25dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/Request_itemImg"
-        android:layout_width="48dp"
-        android:layout_height="37dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_margin="12dp"
         android:src="@drawable/ic_user_vector"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,12 +22,14 @@
         android:id="@+id/Request_itemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
+        android:layout_marginStart="8dp"
+        android:maxWidth="180dp"
+        android:maxLines="2"
         android:text="item Title"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/Request_itemImg"
-        app:layout_constraintStart_toEndOf="@+id/Request_itemImg"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/Request_itemImg"
+        app:layout_constraintBottom_toBottomOf="@id/Request_itemImg"
+        app:layout_constraintStart_toEndOf="@id/Request_itemImg"/>
 
 
     <TextView
@@ -39,8 +41,9 @@
         android:text="Accepted"
         android:textSize="24dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/Request_itemTitle" />
-
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="@id/Request_itemImg"
+        app:layout_constraintBottom_toBottomOf="@id/Request_itemImg"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

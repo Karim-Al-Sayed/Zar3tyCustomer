@@ -149,8 +149,7 @@ public class Home extends Fragment {
                     String item_price = dataSnapshot1.child("Item_Price").getValue(String.class);
                     String item_description = dataSnapshot1.child("Item_Description").getValue(String.class);
                     String category = dataSnapshot1.child("Category").getValue(String.class);
-                    // String item_quantity = dataSnapshot1.child("Item_Quantity").getValue().toString();
-                    String id = dataSnapshot1.child("User_ID").getValue(String.class);
+                     String id = dataSnapshot1.child("User_ID").getValue(String.class);
                     String upload_date = dataSnapshot1.child("Upload_Date").getValue(String.class);
                     String upload_date_show = dataSnapshot1.child("Upload_Date_To_Show").getValue(String.class);
                     String img_uri = dataSnapshot1.child("Img_Uri").getValue(String.class);

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +51,13 @@ public class followReqAdapter extends RecyclerView.Adapter<followReqAdapter.View
         final Follow follow = followsList.get(position);
         holder.title.setText(follow.getTitle());
         holder.state.setText(follow.getState());
+        if(follow.getState().equals("Accepted")){
+            holder.state.setTextColor(ContextCompat.getColor(context, R.color.green));
+        }
+        else if(follow.getState().equals("Rejected")){
+            holder.state.setTextColor(ContextCompat.getColor(context, R.color.red));
+
+        }
         Glide.with(context.getApplicationContext()).load(follow.getImg()).into(holder.img);
     }
 

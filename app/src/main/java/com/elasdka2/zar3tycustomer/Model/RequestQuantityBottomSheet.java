@@ -2,6 +2,7 @@ package com.elasdka2.zar3tycustomer.Model;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
 import com.elasdka2.zar3tycustomer.ItemInfoFrag;
 import com.elasdka2.zar3tycustomer.R;
@@ -65,33 +65,27 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
             Toast.makeText(getActivity(), "Type quantity you need here Please !", Toast.LENGTH_LONG).show();
         } else {
             if (getArguments() != null) {
-                AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getActivity()).getApplicationContext()).create();
-                alertDialog.setMessage("Are you sure ? Request " + getArguments().getString("Item_Title"));
 
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "REQUEST",
-                        (dialog, which) -> {
-                            HashMap<String, Object> map = new HashMap<>();
-                            map.put("ItemTitle", getArguments().getString("Item_Title"));
-                            map.put("ItemIMG", getArguments().getString("Item_IMG"));
-                            map.put("RequestDate", getArguments().getString("Request_Date"));
-                            map.put("State","Pending");
-                            map.put("CustomerID", getArguments().getString("CustomerID"));
-                            map.put("SellerID", getArguments().getString("SellerID"));
-                            map.put("ItemPrice", CalcSalary(itemPrice) + " EGP");
-                            map.put("CustomerName", UserName);
-                            map.put("CustomerImg", ImgUser);
-                            map.put("ItemQuantity", str_quantity);
-                            Ref_pending.push().setValue(map);
-                            dismiss();
-                        });
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", (dialog, which) -> dialog.dismiss());
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("ItemTitle", getArguments().getString("Item_Title"));
+                map.put("ItemIMG", getArguments().getString("Item_IMG"));
+                map.put("RequestDate", getArguments().getString("Request_Date"));
+                map.put("State", "Pending");
+                map.put("CustomerID", getArguments().getString("CustomerID"));
+                map.put("SellerID", getArguments().getString("SellerID"));
+                map.put("ItemPrice", CalcSalary(itemPrice) + " EGP");
+                map.put("CustomerName", UserName);
+                map.put("CustomerImg", ImgUser);
+                map.put("ItemQuantity", str_quantity);
+                Ref_pending.push().setValue(map);
+                dismiss();
+            }
 
-                alertDialog.show();
 
             }
 
         }
-    }
+
 
     private Integer CalcSalary(Integer p) {
         itemPrice = p;

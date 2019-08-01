@@ -137,7 +137,9 @@ public class Personal extends Fragment {
     }
     @OnClick(R.id.MyOrdersCard)
     public void GoToOrders(){
-        Toast.makeText(context.getApplicationContext(),"it will done soon isa ...",Toast.LENGTH_SHORT).show();
+Intent intent=new Intent(context,followRequestRecycler.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
     @OnClick(R.id.sign_out_text)
     public void SignOut(){
