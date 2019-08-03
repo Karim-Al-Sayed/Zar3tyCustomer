@@ -1,13 +1,22 @@
 package com.elasdka2.zar3tycustomer;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.elasdka2.zar3tycustomer.Model.Chat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,9 +34,10 @@ public class Navigation extends AppCompatActivity implements ComplaintBottomShee
     BottomNavigationView navigation;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference UserRef;
+    private DatabaseReference UserRef,ChatRef;
     String CurrentUserID, welcome_mail, welcome_name;
-
+    public int NotificationID;
+    NotificationManager notificationManager;
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -70,6 +80,22 @@ public class Navigation extends AppCompatActivity implements ComplaintBottomShee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_act);
         ButterKnife.bind(this);
+        notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String CHANNEL_ID = "my_channel_01";
+            CharSequence name = "my_channel";
+            String Description = "This is my channel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.setDescription(Description);
+            mChannel.enableLights(true);
+            mChannel.setLightColor(Color.RED);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mChannel.setShowBadge(false);
+            notificationManager.createNotificationChannel(mChannel);
+        }*/
 
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
@@ -89,6 +115,7 @@ public class Navigation extends AppCompatActivity implements ComplaintBottomShee
 
         mAuth = FirebaseAuth.getInstance();
         UserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers");
+        ChatRef = FirebaseDatabase.getInstance().getReference("Chats");
         CurrentUserID = mAuth.getCurrentUser().getUid();
 
         UserRef.child(CurrentUserID).addValueEventListener(new ValueEventListener() {
@@ -110,8 +137,55 @@ public class Navigation extends AppCompatActivity implements ComplaintBottomShee
             }
         });
 
-    }
+        ChatRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int unread = 0;
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    Chat chat = ds.getValue(Chat.class);
+                    if (chat.getTo().equals(CurrentUserID) && !chat.isIsseen()){
+                        unread++;
+                    }
 
+                }
+                if (unread != 0){
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+                        String CHANNEL_ID = "my_channel_01";
+                        CharSequence name = "my_channel";
+                        String Description = "This is my channel";
+                        int importance = NotificationManager.IMPORTANCE_HIGH;
+                        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+                        mChannel.setDescription(Description);
+                        mChannel.enableLights(true);
+                        mChannel.setLightColor(Color.RED);
+                        mChannel.enableVibration(true);
+                        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                        mChannel.setShowBadge(false);
+                        notificationManager.createNotificationChannel(mChannel);
+                    }
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(Navigation.this,"my_channel_01")
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setVibrate(new long[]{1000, 1000})
+                            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                            .setContentTitle("New Message")
+                            .setContentText("You Have New Message");
+
+                    NotificationID = (int) System.currentTimeMillis();
+                    NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        manager.notify(NotificationID, builder.build());
+                    }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     public void onButtonClicked(String text) {

@@ -31,10 +31,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         this.context = context;
     }
 
-
-
-
-
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,6 +58,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Chat chat = mChat.get(position);
         holder.message.setText(chat.getMessage());
+
+        if (position == mChat.size() - 1){
+
+            if (chat.isIsseen()){
+                holder.seen.setText("Seen");
+            }else holder.seen.setText("Delivered");
+
+        }else holder.seen.setVisibility(View.GONE);
+
 }
 
     @Override
@@ -70,13 +75,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView message, username;
+        TextView message, username,seen;
 
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             message = itemView.findViewById(R.id.show_message);
             username = itemView.findViewById(R.id.chat_item_left_user_name);
+            seen = itemView.findViewById(R.id.txt_seen);
 
         }
     }
