@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.elasdka2.zar3tycustomer.Adapters.AgricultureItemsAdapter;
@@ -22,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,6 +98,10 @@ public class IndustrialAgricultureItems extends Fragment {
         Sales_Ref = FirebaseDatabase.getInstance().getReference("Sales");
         itemslist = new ArrayList<>();
 
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.divider)));
+        recyclerView.addItemDecoration(itemDecorator);
+
         Sales_Ref.child("Industrial_Agriculture").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -119,6 +126,7 @@ public class IndustrialAgricultureItems extends Fragment {
                     items.setDate(upload_date);
                     items.setDate_to_show(upload_date_show);
                     items.setImg_uri(img_uri);
+                    items.setKey(dataSnapshot1.getKey());
                     itemslist.add(items);
 
                 }

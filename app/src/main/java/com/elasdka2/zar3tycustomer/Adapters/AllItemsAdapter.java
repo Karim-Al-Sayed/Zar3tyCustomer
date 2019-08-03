@@ -1,6 +1,7 @@
 package com.elasdka2.zar3tycustomer.Adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,18 +15,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.elasdka2.zar3tycustomer.ItemInfoFrag;
 import com.elasdka2.zar3tycustomer.Model.Items;
 import com.elasdka2.zar3tycustomer.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,6 +47,7 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
     private String id;
     private StorageReference Sales_Storage_Ref;
     private DatabaseReference Fav_Ref;
+    boolean IsFavorite = false;
 
     public AllItemsAdapter(ArrayList<Items> itemlist, Context context) {
         this.itemsList = itemlist;
@@ -57,13 +62,38 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
         SalesAuth = FirebaseAuth.getInstance();
         id = Objects.requireNonNull(SalesAuth.getCurrentUser()).getUid();
         Sales_Storage_Ref = FirebaseStorage.getInstance().getReference("Sales");
+
+
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
         Animation myanim = AnimationUtils.loadAnimation(context, R.anim.stb2);
         holder.Card_Item.startAnimation(myanim);
+
+        Fav_Ref.child(id).orderByChild("Item_Description")
+                .equalTo(itemsList.get(position).getDescription())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()){
+                            holder.fav_Img.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_favorite));
+                            IsFavorite = true;
+                        }else  {
+                            holder.fav_Img.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.ic_favorite_border));
+                            IsFavorite = false;
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
         holder.Item_Title.setText(itemsList.get(position).getTitle());
         holder.Item_Price.setText(itemsList.get(position).getPrice());
         Glide.with(context.getApplicationContext()).load(itemsList.get(position).getImg_uri()).into(holder.Item_Img);
@@ -90,20 +120,106 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
         });
 
         holder.fav_Img.setOnClickListener(v -> {
+           if (IsFavorite){
+               Fav_Ref.child(id).child(itemsList.get(position).getKey()).removeValue().addOnCompleteListener(task1 -> {
+                   if (task1.isSuccessful()){
+                       holder.fav_Img.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_favorite_border));
 
-            Map<String, String> favMap = new HashMap<>();
-            favMap.put("Item_Title", holder.Item_Title.getText().toString());
-            favMap.put("Item_Description", itemsList.get(position).getDescription());
-            favMap.put("Item_Price", holder.Item_Price.getText().toString() + " EGP");
-            favMap.put("User_ID", id);
+                       Toast.makeText(context.getApplicationContext(),
+                               itemsList.get(position).getTitle() + " has been deleted from Favorites",
+                               Toast.LENGTH_SHORT).show();
+                       IsFavorite = false;
 
-            Fav_Ref.child(id).push().setValue(favMap).addOnCompleteListener(task -> Toast.makeText(context.getApplicationContext(), itemsList.get(position).getTitle() + " has been added to Favorites Successfully", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show());
+                   }else Toast.makeText(context.getApplicationContext(),
+                           task1.getException().getMessage(),
+                           Toast.LENGTH_LONG).show();
+               });
+           }else {
+               Map<String, String> favMap = new HashMap<>();
+               favMap.put("Item_Title", holder.Item_Title.getText().toString());
+               favMap.put("Item_Description", itemsList.get(position).getDescription());
+               favMap.put("Item_Price", holder.Item_Price.getText().toString() + " EGP");
+               favMap.put("User_ID", id);
 
+               Fav_Ref.child(id).push().setValue(favMap).addOnCompleteListener(task -> {
+                   if (task.isSuccessful()) {
+                       holder.fav_Img.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite));
 
+                       Toast.makeText(context.getApplicationContext(),
+                               itemsList.get(position).getTitle() + " has been added to Favorites Successfully",
+                               Toast.LENGTH_SHORT).show();
+                       IsFavorite = true;
+
+                   }else Toast.makeText(context.getApplicationContext(),
+                           task.getException().getMessage(),
+                           Toast.LENGTH_LONG).show();
+
+               }).addOnFailureListener(e -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show());
+
+           }
         });
-    }
 
+        /*holder.fav_Img.setOnClickListener(v -> {
+
+            if (holder.fav_Img.getDrawable().getConstantState() == context.getResources().getDrawable(R.drawable.ic_favorite_border).getConstantState()) {
+                Map<String, String> favMap = new HashMap<>();
+                favMap.put("Item_Title", holder.Item_Title.getText().toString());
+                favMap.put("Item_Description", itemsList.get(position).getDescription());
+                favMap.put("Item_Price", holder.Item_Price.getText().toString() + " EGP");
+                favMap.put("User_ID", id);
+
+                Fav_Ref.child(id).push().setValue(favMap).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        holder.fav_Img.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_favorite));
+
+                        Toast.makeText(context.getApplicationContext(),
+                                itemsList.get(position).getTitle() + " has been added to Favorites Successfully",
+                                Toast.LENGTH_SHORT).show();
+
+                    }else Toast.makeText(context.getApplicationContext(),
+                            task.getException().getMessage(),
+                            Toast.LENGTH_LONG).show();
+
+                }).addOnFailureListener(e -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show());
+            }else {
+
+                holder.fav_Img.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_favorite_border));
+                Fav_Ref.child(id).child(itemsList.get(position).getKey()).removeValue().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()){
+
+                        Toast.makeText(context.getApplicationContext(),
+                                itemsList.get(position).getTitle() + " has been deleted from Favorites",
+                                Toast.LENGTH_SHORT).show();
+
+                    }else Toast.makeText(context.getApplicationContext(),
+                            task1.getException().getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+
+
+
+        });*/
+    }
+/*if (holder.fav_Img.getDrawable().getConstantState() == context.getResources().getDrawable(R.drawable.ic_favorite_border).getConstantState()){
+
+        holder.fav_Img.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_favorite));
+        Toast.makeText(context.getApplicationContext(), itemsList.get(position).getTitle() + " has been added to Favorites Successfully", Toast.LENGTH_SHORT).show();
+
+    }else {
+        holder.fav_Img.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_favorite_border));
+        Fav_Ref.child(id).child(itemsList.get(position).getKey()).removeValue().addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()){
+
+                Toast.makeText(context.getApplicationContext(),
+                        itemsList.get(position).getTitle() + " has been deleted from Favorites",
+                        Toast.LENGTH_SHORT).show();
+
+            }else Toast.makeText(context.getApplicationContext(),
+                    task1.getException().getMessage(),
+                    Toast.LENGTH_LONG).show();
+        });
+    }*/
     @Override
     public int getItemCount() {
         return itemsList.size();
@@ -111,7 +227,7 @@ public class AllItemsAdapter extends RecyclerView.Adapter<AllItemsAdapter.MyView
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView Item_Title, Item_Price;
-        ImageView Item_Img, fav_Img;
+        ImageView Item_Img,fav_Img;
         CardView Card_Item;
 
         MyViewHolder(@NonNull View itemView) {

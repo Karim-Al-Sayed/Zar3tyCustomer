@@ -110,5 +110,11 @@ public class Items {
         this.img_uri = img_uri;
     }
 
+    public String getKey() {
+        return key;
+    }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

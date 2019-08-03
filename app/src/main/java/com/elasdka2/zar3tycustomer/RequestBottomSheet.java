@@ -28,54 +28,48 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import edu.counterview.CounterListner;
+import edu.counterview.CounterView;
+
 public class RequestBottomSheet extends BottomSheetDialogFragment {
-
-    // ValueCounterView valueCounter= (ValueCounterView) findViewById(R.id.valueCounter);
-
 
     private BottomSheetListener myListener;
     private FirebaseAuth mAuth;
     private DatabaseReference UserRef, ComplaintRef;
     TextView Price;
     Button done, cancel;
-    EditText quantity;
+    CounterView cv;
     TextWatcher txtListener;
     String ImgUser, ImgItem, UserName;
-    Integer itemPrice, TotalPrice, quantity2;
+    Integer itemPrice, TotalPrice, quantity2, q = 1;
 
     private DatabaseReference Ref_pending;
 
 
     private void CheckDataAndSend() {
-        String str_quantity = quantity.getText().toString();
-        if (TextUtils.isEmpty(str_quantity)) {
-            Toast.makeText(getActivity(), "Type quantity you need here Please !", Toast.LENGTH_LONG).show();
-        } else {
-            if (getArguments() != null) {
-
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("ItemTitle", getArguments().getString("Item_Title"));
-                map.put("ItemIMG", getArguments().getString("Item_IMG"));
-                map.put("RequestDate", getArguments().getString("Request_Date"));
-                map.put("State", "Pending");
-                map.put("CustomerID", getArguments().getString("CustomerID"));
-                map.put("SellerID", getArguments().getString("SellerID"));
-                map.put("ItemPrice", String.valueOf(CalcSalary(itemPrice)));
-                map.put("CustomerName", UserName);
-                map.put("CustomerImg", ImgUser);
-                map.put("ItemQuantity", str_quantity);
-                Ref_pending.push().setValue(map);
-                dismiss();
-            }
-
-
-            }
-
+        if (getArguments() != null) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("ItemTitle", getArguments().getString("Item_Title"));
+            map.put("ItemIMG", getArguments().getString("Item_IMG"));
+            map.put("RequestDate", getArguments().getString("Request_Date"));
+            map.put("State", "Pending");
+            map.put("CustomerID", getArguments().getString("CustomerID"));
+            map.put("SellerID", getArguments().getString("SellerID"));
+            map.put("ItemPrice", String.valueOf(CalcSalary(itemPrice, q)));
+            map.put("CustomerName", UserName);
+            map.put("CustomerImg", ImgUser);
+            map.put("ItemQuantity", q.toString());
+            Ref_pending.push().setValue(map);
+            dismiss();
         }
 
-    private Integer CalcSalary(Integer p) {
+
+    }
+
+
+    private Integer CalcSalary(Integer p, Integer q2) {
         itemPrice = p;
-        quantity2 = Integer.parseInt(quantity.getText().toString());
+        quantity2 = q2;
         TotalPrice = itemPrice * quantity2;
         return TotalPrice;
     }
@@ -84,11 +78,32 @@ public class RequestBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.request_bottom_sheet, container, false);
+        cv = (CounterView) v.findViewById(R.id.cv);
+        Price = v.findViewById(R.id.totalSalary);
+
+        cv.setStartCounterValue("1");
+        cv.setColor(R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorAccent);
+        cv.setCounterListener(new CounterListner() {
+            @Override
+            public void onIncClick(String s) {
+                q = q + 1;
+                Price.setText(CalcSalary(itemPrice, q).toString());
+
+            }
+
+            @Override
+            public void onDecClick(String s) {
+                if (q == 1) return;
+                else {
+                    q = q - 1;
+                    Price.setText(CalcSalary(itemPrice, q).toString());
+                }
+            }
+        });
+
 
         done = v.findViewById(R.id.Quantity_Accept);
         cancel = v.findViewById(R.id.Quantity_Reject);
-        Price = v.findViewById(R.id.totalSalary);
-        quantity = v.findViewById(R.id.Quantity);
         mAuth = FirebaseAuth.getInstance();
 
         Ref_pending = FirebaseDatabase.getInstance().getReference("Pending Requests");
@@ -98,8 +113,8 @@ public class RequestBottomSheet extends BottomSheetDialogFragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String UserNamee = dataSnapshot.child("UserName").getValue(String.class);
                 String imgg = dataSnapshot.child("ImgUri").getValue(String.class);
-                UserName=UserNamee;
-                ImgUser=imgg;
+                UserName = UserNamee;
+                ImgUser = imgg;
 
             }
 
@@ -112,31 +127,7 @@ public class RequestBottomSheet extends BottomSheetDialogFragment {
         Price.setText(String.valueOf(getArguments().getInt("Price")));
         itemPrice = (getArguments().getInt("Price"));
 
-        txtListener = new TextWatcher() {
 
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
-                Price.setText(CalcSalary(itemPrice) + " LE");
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                Price.setText(getArguments().getString("Price"));
-
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-                Price.setText(CalcSalary(itemPrice) + "LE");
-
-            }
-        };
-        quantity.addTextChangedListener(txtListener);
         done.setOnClickListener(v1 -> {
 
             CheckDataAndSend();

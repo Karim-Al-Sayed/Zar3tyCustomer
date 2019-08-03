@@ -10,25 +10,37 @@
     app:behavior_peekHeight="200dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     >
-    <androidx.appcompat.widget.AppCompatEditText
-        app:backgroundTint="#000"
-        android:id="@+id/Quantity"
-        android:inputType="numberDecimal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+
+    <edu.counterview.CounterView
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:padding="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#000"
-        android:hint="Enter Quantity"
-        android:fontFamily="@font/allerta_stencil"
-        />
+        android:id="@+id/cv"
+        android:layout_width="80dp"
+        android:layout_height="50dp" />
+
+
+
+    <!-- <androidx.appcompat.widget.AppCompatEditText
+         app:backgroundTint="#000"
+         android:id="@+id/Quantity"
+         android:inputType="numberDecimal"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         android:padding="16dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginStart="16dp"
+         android:layout_marginEnd="16dp"
+         android:textSize="18sp"
+         android:textStyle="bold"
+         android:textColor="#000"
+         android:hint="Enter Quantity"
+         android:fontFamily="@font/allerta_stencil"
+         />-->
     <TextView
         android:textSize="24sp"
         app:backgroundTint="#000"
@@ -38,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/Quantity"
+        app:layout_constraintTop_toBottomOf="@id/cv"
         android:text="24 LE"
 
         />

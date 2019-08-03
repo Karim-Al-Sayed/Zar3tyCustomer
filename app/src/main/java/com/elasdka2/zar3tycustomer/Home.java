@@ -134,6 +134,7 @@ public class Home extends Fragment {
                     items.setDate(upload_date);
                     items.setDate_to_show(upload_date_show);
                     items.setImg_uri(img_uri);
+                    items.setKey(dataSnapshot1.getKey());
                     itemlist.add(items);
 
                 }
@@ -171,6 +172,7 @@ public class Home extends Fragment {
                     items.setDate(upload_date);
                     items.setDate_to_show(upload_date_show);
                     items.setImg_uri(img_uri);
+                    items.setKey(dataSnapshot1.getKey());
                     itemlist.add(items);
 
                 }
@@ -209,6 +211,7 @@ public class Home extends Fragment {
                     items.setDate(upload_date);
                     items.setDate_to_show(upload_date_show);
                     items.setImg_uri(img_uri);
+                    items.setKey(dataSnapshot1.getKey());
                     itemlist.add(items);
 
                 }
