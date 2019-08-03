@@ -8,7 +8,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,6 +23,8 @@ import com.elasdka2.zar3tycustomer.Helper.ChatsCustomerRecylcerItemTouchHelper;
 import com.elasdka2.zar3tycustomer.Helper.ChatsRecylcerItemTouchHelperListener;
 import com.elasdka2.zar3tycustomer.Model.ChatList;
 import com.elasdka2.zar3tycustomer.Model.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -70,7 +74,7 @@ public class MyChats extends Fragment implements ChatsRecylcerItemTouchHelperLis
     private List<Users> mUsers;
     private List<ChatList> userList;
     private FirebaseUser fuser;
-    private DatabaseReference reference;
+    private DatabaseReference reference,reference2;
 
     //----------------------------
     public MyChats() {
@@ -119,6 +123,7 @@ public class MyChats extends Fragment implements ChatsRecylcerItemTouchHelperLis
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userList = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("ChatList").child(fuser.getUid());
+        reference2 = FirebaseDatabase.getInstance().getReference("ChatList");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -188,17 +193,32 @@ public class MyChats extends Fragment implements ChatsRecylcerItemTouchHelperLis
         if (viewHolder instanceof DisplayChatAdapter.ViewHolder){
             String UserName = mUsers.get(viewHolder.getAdapterPosition()).getFirstName() + " " +
                     mUsers.get(viewHolder.getAdapterPosition()).getLastName();
+            String UserID = mUsers.get(viewHolder.getAdapterPosition()).getUser_ID();
 
             final Users DeletedUser = mUsers.get(viewHolder.getAdapterPosition());
             final  int  DeleteIndex = viewHolder.getAdapterPosition();
 
             userAdapter.RemoveChat(DeleteIndex);
+            reference2.child(fuser.getUid()).child(UserID).removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()){
+                    reference2.child(UserID).child(fuser.getUid()).removeValue().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()){
 
-            Snackbar snackbar =
+                            Snackbar snackbar =
+                                    Snackbar.make(constraintLayout,UserName + " Has Been Removed !",Snackbar.LENGTH_LONG);
+                                   /*snackbar.setAction("UNDO", v -> userAdapter.RestoreChat(DeletedUser,DeleteIndex));
+                                     snackbar.setActionTextColor(Color.YELLOW);*/
+                            snackbar.show();
+                        }else Toast.makeText(context, Objects.requireNonNull(task1.getException()).getMessage(),Toast.LENGTH_SHORT).show();
+                    });
+
+                }else Toast.makeText(context, Objects.requireNonNull(task.getException()).getMessage(),Toast.LENGTH_SHORT).show();
+            });
+           /* Snackbar snackbar =
                     Snackbar.make(constraintLayout,UserName + " Has Been Removed !",Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", v -> userAdapter.RestoreChat(DeletedUser,DeleteIndex));
             snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
+            snackbar.show();*/
         }
     }
 
