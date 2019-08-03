@@ -9,66 +9,78 @@
         android:id="@+id/cust_card_item_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            >
             <ImageView
                 android:id="@+id/cust_item_img_row"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:layout_marginBottom="8dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintLeft_toLeftOf="parent"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription,MissingConstraints" />
 
-                    <TextView
-                        android:id="@+id/cust_item_title_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="Item Title"
-                        android:textColor="#0A8DF0"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/allerta_stencil"
-                        tools:ignore="HardcodedText,RtlHardcoded" />
+            <TextView
+                android:id="@+id/cust_item_title_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Item Title"
+                android:textColor="#0A8DF0"
+                android:textStyle="bold"
+                android:fontFamily="@font/allerta_stencil"
+                tools:ignore="HardcodedText,RtlHardcoded"
+                app:layout_constraintTop_toBottomOf="@id/cust_item_img_row"
+                app:layout_constraintStart_toStartOf="parent"
+               />
 
-                    <TextView
-                        android:id="@+id/cust_item_price_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="Item Price"
-                        android:textColor="#000"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        tools:ignore="HardcodedText,RtlHardcoded" />
-                </LinearLayout>
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ImageView
-                        android:id="@+id/favorite_Img"
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:src="@drawable/love"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp" />
-
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+            <TextView
+                android:id="@+id/cust_item_price_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="Item Price"
+                android:textColor="#0C9402"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/allerta_stencil"
+                tools:ignore="HardcodedText,RtlHardcoded"
+                app:layout_constraintTop_toBottomOf="@id/cust_item_title_row"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+            <ImageView
+                android:id="@+id/favorite_Img"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cust_item_img_row"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_favorite_border"
+                android:layout_width="36dp"
+                android:layout_height="36dp"/>
+            <ImageView
+                android:id="@+id/rate_Img"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintEnd_toStartOf="@id/favorite_Img"
+                app:layout_constraintTop_toBottomOf="@id/cust_item_img_row"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_rate_black"
+                android:layout_width="36dp"
+                android:layout_height="36dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/seller_item_date_row"

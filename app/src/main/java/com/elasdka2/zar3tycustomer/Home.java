@@ -4,7 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -100,8 +103,12 @@ public class Home extends Fragment {
         itemlist = new ArrayList<>();
         SalesAuth = FirebaseAuth.getInstance();
         Sales_Ref = FirebaseDatabase.getInstance().getReference("Sales");
-        GridLayoutManager linearLayoutManager = new GridLayoutManager(context, 2);
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(context, 1);
         home_recycler.setLayoutManager(linearLayoutManager);
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.divider)));
+        home_recycler.addItemDecoration(itemDecorator);
 
         Sales_Ref.child("Agriculture").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.elasdka2.zar3tycustomer.ItemInfoFrag;
 import com.elasdka2.zar3tycustomer.Model.Items;
 import com.elasdka2.zar3tycustomer.R;
