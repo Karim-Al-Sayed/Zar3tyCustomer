@@ -1,10 +1,7 @@
-package com.elasdka2.zar3tycustomer.Model;
+package com.elasdka2.zar3tycustomer;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,13 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.elasdka2.zar3tycustomer.ItemInfoFrag;
 import com.elasdka2.zar3tycustomer.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -33,15 +26,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 //import com.mohammedalaa.valuecounterlib.ValueCounterView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
-public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
+public class RequestBottomSheet extends BottomSheetDialogFragment {
 
     // ValueCounterView valueCounter= (ValueCounterView) findViewById(R.id.valueCounter);
 
@@ -86,7 +73,6 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
 
         }
 
-
     private Integer CalcSalary(Integer p) {
         itemPrice = p;
         quantity2 = Integer.parseInt(quantity.getText().toString());
@@ -97,20 +83,7 @@ public class RequestQuantityBottomSheet extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.complaint_bottom_sheet, container, false);
-
-
-
-
-
-
-
-
-
-
-
-
-
+        View v = inflater.inflate(R.layout.request_bottom_sheet, container, false);
 
         done = v.findViewById(R.id.Quantity_Accept);
         cancel = v.findViewById(R.id.Quantity_Reject);

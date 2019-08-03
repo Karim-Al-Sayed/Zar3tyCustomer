@@ -21,8 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.elasdka2.zar3tycustomer.Model.RequestQuantityBottomSheet;
-import com.google.android.gms.identity.intents.AddressConstants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,10 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -112,7 +107,7 @@ public class ItemInfoFrag extends Fragment {
         args.putString("CustomerID",CurrentUser);
         args.putString("SellerID",seller_id);
 
-        RequestQuantityBottomSheet bottomSheet = new RequestQuantityBottomSheet();
+        RequestBottomSheet bottomSheet = new RequestBottomSheet();
         bottomSheet.setArguments(args);
         bottomSheet.setCancelable(false);
         bottomSheet.show(getChildFragmentManager(),"");
